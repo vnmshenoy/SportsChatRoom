@@ -94,7 +94,6 @@
     <Compile Include="Startup1.cs" />
     <None Include="packages.config" />
     <Content Include="css\bootstrap.css" />
-    <Compile Include="Global.asax.cs" />
     <Content Include="index.html" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />

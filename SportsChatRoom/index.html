@@ -67,27 +67,40 @@
             padding-left: 0px;
             margin-top: 12px;
         }
+        .alternative_cls:nth-child(odd) {
+            background: #ccc;
+        }
     </style>
     <script type="text/javascript">
         var _sportsChatRoom;
         var _name = '';
+        var _room = "cricket";
         function OnJoinCricket() {
+            _room = "cricket";
+            $('#tennis').hide();
+            $('#cricket').attr('disabled', true);
+            $('#messagebox').fadeIn('slow');
             $('#nameModal').modal('show');           
         }
         function save() {
             _name = $('#myname').val();
+            $('#currentuser').html('<p> Curr user is <b>' + _name +'</b> </p>');
+            $('#currentuser').show();
             _sportsChatRoom.server.joinSportRoom("cricket", _name);
             $('#nameModal').modal('hide');    
         }
 
         function OnJoinTennis() {
-            alert("on join tennis");
+            _room = "tennis";
         }       
         
         function registerClientMethods(_sportsChatRoom) {
             _sportsChatRoom.client.newuser = function (name) {
-                $('#joinedUsers').append("<p style='color:red'>user" + name + " has joined the group </p>").fadeIn().delay(10000).fadeOut();
-            };             
+               $('#joinedUsers').append("<p> user " + name + " has joined the group </p>").fadeIn().delay(10000).fadeOut();
+            };  
+            _sportsChatRoom.client.appendmessage = function (message, messageSentBy) {
+                $("#messages").append('<div class="row alternative_cls"><div class="col-xs-12"><span name="name"> ' + messageSentBy+' :' +  message +' </span></div></div>');
+            };  
         }
          
         $(function () {
@@ -98,9 +111,11 @@
             $.connection.hub.logging = true;           
             $.connection.hub.start();
         });
-        // On New User Connected        
-      
-    </script>
+        function sendMessage() {
+            var message = $('#message').val();
+            _sportsChatRoom.server.sendMessageToGroup(_room,message,_name);
+        }
+    </script>   
 </head>
 <body>
 
@@ -109,16 +124,16 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Name</h5>
+                    <h5 class="modal-title">Enter your name below</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input id="myname" type="text" name="name" value=""/>
+                    <input id="myname" type="text" name="name" value="" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="save()" class="btn btn-primary">Save changes</button>
+                    <button type="button" onclick="save()" class="btn btn-primary">Join room</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -127,85 +142,31 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="row">
-                    <h4 class="text-center">Responsive Chat Template</h4>
-                    <div class="col-xs-6 col-xs-offset-7 col-md-9 col-md-offset-5">
-                        <div class="btn-group">
-                            <button id="cricket" class="btn btn-primary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span value="cricket" class="fa fa-comments pull-left">Cricket Chat Room
-                            </button>
-                            <button id="tennis" class="btn btn-primary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span value="tennis" class="fa fa-comments pull-left">Tennis Chat Room
-                            </button>
-                            <!--<button id="tabletennis" class="btn btn-primary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span value="tabletennis" class="fa fa-comments pull-left">Table Tennis Chat Room
-                            </button>-->
-                            <ul class="dropdown-menu pb-chat-dropdown">
-                                <li>
-                                    <div class="panel panel-info pb-chat-panel">
-                                        <div class="panel panel-heading pb-chat-panel-heading">
-                                            <div class="row">
-                                                <div class="col-xs-12">
-                                                    <a href="#">
-                                                        <label id="support_label">Post your message</label>
-                                                    </a>
-                                                    <a href="#"><span class="fa fa-cog pull-right pb-chat-top-icons"></span></a>
-                                                    <a href="#"><span class="fa fa-share pull-right pb-chat-top-icons"></span></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <form>
-                                                <!--<div class="form-group">
-                                                    <span class="fa fa-lg fa-user pb-chat-fa-user"></span><span class="label label-default pb-chat-labels pb-chat-labels-left">Hi, how are you?</span>
-                                                </div>
-                                                <hr>
-                                                <div class="form-group pull-right pb-chat-labels-right">
-                                                    <span class="label label-primary pb-chat-labels pb-chat-labels-primary">Hi, i'm fine, you?</span><span class="fa fa-lg fa-user pb-chat-fa-user"></span>
-                                                </div>
-                                                <div class="clearfix"></div>vvs
-                                                <hr>
-                                                <div class="form-group">
-                                                    <span class="fa fa-lg fa-user pb-chat-labels pb-chat-fa-user"></span><span class="label label-default pb-chat-labels pb-chat-labels-left">I'm great, wanna hangout?</span>
-                                                </div>
-                                                <hr>
-                                                <div class="form-group pull-right pb-chat-labels-right">
-                                                    <span class="label label-primary pb-chat-labels pb-chat-labels-primary">No, huehuehue</span><span class="fa fa-lg fa-user pb-chat-fa-user"></span>
-                                                </div>
-                                                <div class="clearfix"></div>
-                                                <hr>
-                                                <div class="form-group pull-right pb-chat-labels-right">
-                                                    <span class="label label-primary pb-chat-labels pb-chat-labels-primary">I'm busy hanging out :D</span><span class="fa fa-lg fa-user pb-chat-fa-user"></span>
-                                                </div>
-                                                <div class="clearfix"></div>-->
-                                            </form>
-                                        </div>
-                                        <div class="panel-footer">
-                                            <div class="row">
-                                                <div class="col-xs-10">
-                                                    <textarea class="form-control pb-chat-textarea" placeholder="Type your message here..."></textarea>
-                                                </div>
-                                                <div class="col-xs-2 pb-btn-circle-div">
-                                                    <button class="btn btn-primary btn-circle pb-chat-btn-circle"><span class="fa fa-chevron-right"></span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                <!-- <div class="row">-->
+                <h4 class="text-center">Responsive Chat Template</h4>
+                <div class="col-xs-6 col-xs-offset-7 col-md-9 col-md-offset-5">
+                    <div class="btn-group">
+                        <button id="cricket" class="btn btn-primary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span value="cricket" class="fa fa-comments pull-left">Cricket Chat Room
+                        </button>
+                        <button id="tennis" class="btn btn-primary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span value="tennis" class="fa fa-comments pull-left">Tennis Chat Room
+                        </button>
                     </div>
+                </div>
+                <!--   </div>-->
+                <div id="messagebox" class="row" style="display:none;">
+                    <h4 id="joinedUsers"></h4>
+                    <span id="currentuser"></span>
+                    <p class="text-center">Enter your message</p>
+                    <textarea rows="3" id="message"></textarea></br>
+                    <button class="btn btn-primary" onclick="sendMessage();">Click to send your message</button>
                 </div>
             </div>
         </div>
-         <div class="row">
-             <h4 id="joinedUsers"></h4>
-            <div class="col-md-12">
-               
-            </div>
+        <div id="messages" style="color:grey;" >
+
         </div>
     </div>
-
-
 </body>
 </html>

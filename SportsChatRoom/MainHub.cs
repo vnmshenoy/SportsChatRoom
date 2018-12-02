@@ -25,6 +25,11 @@ namespace SportsChatRoom
             Groups.Add(Context.ConnectionId, room);
             Clients.OthersInGroup(room).newUser(name);         
         }
+        //Client calls this method to join the room. There will be other clients as well in that room
+        public void SendMessageToGroup(string room,string message,string messageSentBy)
+        {
+            Clients.Group(room).appendMessage(message, messageSentBy);
+        }
         public  Task OnConnected() { return null; }
 
         public  Task OnDisconnected() { return null; }
